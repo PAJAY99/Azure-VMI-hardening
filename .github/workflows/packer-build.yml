@@ -1,0 +1,42 @@
+name: Build AMI and create VM instance with Golden AMI
+on:
+ pull_request: 
+
+jobs:
+  packer_install_and_build:
+    runs-on: ubuntu-latest
+
+    env:
+     AWS_ACCESS_KEY_ID: ${{ secrets.Azure_ACCESS_KEY_ID }}
+     AWS_SECRET_ACCESS_KEY: ${{ secrets.Azure_SECRET_ACCESS_KEY }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Packer
+        uses: hashicorp/setup-packer@v2
+        with:
+          version: latest
+
+      - name: Initialize Packer
+        run: packer init templates/aws-ubuntu.pkr.hcl
+
+      - name: Validate Packer template
+        run: packer validate templates/aws-ubuntu.pkr.hcl
+
+      - name: Build AMI
+        run: packer build templates/aws-ubuntu.pkr.hcl
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: latest  
+
+      - name: Validate and provision infrastructure using terraform
+        run: |
+          cd tf_modules
+          terraform init
+          terraform validate
+          terraform apply -auto-approve
+
