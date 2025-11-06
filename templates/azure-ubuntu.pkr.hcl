@@ -2,7 +2,7 @@ packer {
   required_plugins {
     azure = {
       source  = "github.com/hashicorp/azure"
-      version = "~> 2"
+      version = ">= 2.0.0"
     }
     ansible = {
       source  = "github.com/hashicorp/ansible"
@@ -58,11 +58,6 @@ source "azure-arm" "ubuntu" {
   resource_group_name  = "packer-temp"
   capture_container_name = "images"
   capture_name_prefix  = "golden"
-
-  tags = {
-    environment = "GoldenImage"
-    owner       = "DevOps Team"
-  }
 }
 
 build {
