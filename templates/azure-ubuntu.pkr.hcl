@@ -1,8 +1,10 @@
 packer {
   required_plugins {
+    packer {
+  required_plugins {
     azure = {
-      version = ">= 1.0.0"
       source  = "github.com/hashicorp/azure"
+      version = "~> 2"
     }
     ansible = {
       source  = "github.com/hashicorp/ansible"
@@ -13,22 +15,22 @@ packer {
 
 variable "client_id" {
   type    = string
-  default = "your-azure-client-id"
+  default = "6930b4e2-70b3-4d04-bcd4-588b5b7a63ab"
 }
 
 variable "client_secret" {
   type    = string
-  default = "your-azure-client-secret"
+  default = "1f28b9b5-eb75-4b6d-9e05-6ba0d9a23683"
 }
 
 variable "tenant_id" {
   type    = string
-  default = "your-azure-tenant-id"
+  default = "95bdb50c-a497-4bcf-8fa1-9088dc83f67d"
 }
 
 variable "subscription_id" {
   type    = string
-  default = "your-azure-subscription-id"
+  default = "2c8e92b4-8e2f-4252-af6e-c25fee6f3496"
 }
 
 variable "location" {
@@ -53,21 +55,20 @@ source "azure-arm" "ubuntu" {
   image_publisher      = "Canonical"
   image_offer          = "UbuntuServer"
   image_sku            = "22_04-lts"
-  managed_image_name   = "packer-ubuntu-image"
+  managed_image_name   = "golden-ubuntu-image"
   managed_image_resource_group_name = "packer-images"
   resource_group_name  = "packer-temp"
-  storage_account      = "packerstorageacct"
   capture_container_name = "images"
-  capture_name_prefix  = "packer"
+  capture_name_prefix  = "golden"
 
   tags = {
-    environment = "Development"
+    environment = "GoldenImage"
     owner       = "DevOps Team"
   }
 }
 
 build {
-  name = "Custom Ubuntu Image with jq"
+  name = "Golden Ubuntu Image with jq"
   sources = [
     "source.azure-arm.ubuntu"
   ]
