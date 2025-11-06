@@ -13,7 +13,7 @@ packer {
 
 variable "client_id" {
   type    = string
-  default = "6930b4e2-70b3-4d04-bcd4-588b5b7a63ab"
+  default = "cd7d529f-61ba-4bd1-9bec-8e932b1d2831"
 }
 
 variable "client_secret" {
