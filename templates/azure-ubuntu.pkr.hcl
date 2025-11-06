@@ -13,12 +13,12 @@ packer {
 
 variable "client_id" {
   type    = string
-  default = "cd7d529f-61ba-4bd1-9bec-8e932b1d2831"
+  default = "db245360-7c18-4d9b-bf5e-85d6013e91ea"
 }
 
 variable "client_secret" {
   type    = string
-  default = "QJZ8Q~5yURl.HB15nWfABKgd53mGk6uhF55xqb3T"
+  default = "q3s8Q~ZGT83UZV6NtwhFpfgS9PQIshtcAH8b~ar~"
 }
 
 variable "tenant_id" {
