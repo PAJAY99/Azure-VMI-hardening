@@ -18,7 +18,7 @@ variable "client_id" {
 
 variable "client_secret" {
   type    = string
-  default = "1f28b9b5-eb75-4b6d-9e05-6ba0d9a23683"
+  default = "QJZ8Q~5yURl.HB15nWfABKgd53mGk6uhF55xqb3T"
 }
 
 variable "tenant_id" {
