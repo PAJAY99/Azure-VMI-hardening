@@ -38,7 +38,7 @@ variable "location" {
 
 variable "vm_size" {
   type    = string
-  default = "Basic_A0"
+  default = "Standard_DC24s_v3"
 }
 
 source "azure-arm" "ubuntu" {
