@@ -1,6 +1,8 @@
 name: Build AMI and create VM instance with Golden AMI
 on:
- pull_request: 
+ push:
+  branches: 
+    - main 
 
 jobs:
   packer_install_and_build:
