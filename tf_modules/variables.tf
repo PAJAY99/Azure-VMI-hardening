@@ -43,8 +43,8 @@ variable "image_version" {
   default = "latest"
 }
 
-variable "image_definition" {
-  default = ""
+variable "image_name" {
+  default = "AzureGoldenAMI"
 }
 
 variable "virtual_network_name" {
