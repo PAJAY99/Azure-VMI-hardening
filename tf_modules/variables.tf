@@ -31,7 +31,7 @@ variable "vm_size" {
 
 variable "resource_group_name" {
   type        = string
-  default     = "AzureAMI"
+  default     = "AzureAMIUbuntu"
   description = "Name of the resource group"
 }
 
@@ -44,7 +44,7 @@ variable "image_version" {
 }
 
 variable "image_name" {
-  default = "golden-ubuntu-image"
+  default = "golden-ubuntu-image-jq"
 }
 
 variable "virtual_network_name" {
