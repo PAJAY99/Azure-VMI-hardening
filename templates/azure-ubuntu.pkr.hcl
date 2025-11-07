@@ -42,7 +42,6 @@ variable "vm_size" {
 }
 
 source "azure-arm" "ubuntu" {
-  use_managed_identity = true
   client_id       = var.client_id
   client_secret   = var.client_secret
   tenant_id       = var.tenant_id
