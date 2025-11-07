@@ -1,16 +1,10 @@
-terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "~> 3.71.0"
-    }
-  }
-
-  required_version = ">= 1.1.0"
-}
-
 provider "azurerm" {
   features {}
+
+client_id       = var.client_id
+client_secret   = var.client_secret
+tenant_id       = var.tenant_id
+subscription_id = var.subscription_id
 }
 
 resource "azurerm_resource_group" "rg" {
@@ -18,50 +12,67 @@ resource "azurerm_resource_group" "rg" {
   location = var.location
 }
 
-resource "azurerm_virtual_network" "vnet" {
-  name                = var.virtual_network_name
-  address_space       = [var.address_space]
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+data "azurerm_resource_group" "resource_group" {
+  name = var.resource_group_name
 }
 
-resource "azurerm_subnet" "subnet" {
-  name                 = "${var.prefix}-subnet"
-  resource_group_name  = azurerm_resource_group.rg.name
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = [var.subnet_prefix]
+data "azurerm_subnet" "subnet" {
+  name = var.subnet_name
+  virtual_network_name = var.virtual_network_name
+  resource_group_name = var.resource_group_name
+}
+
+data "azurerm_shared_image_version" "ServerImage" {
+  name = var.image_version
+  image_name = var.image_definition
+  gallery_name = var.gallery_name
+  resource_group_name = var.resource_group_name
 }
 
 resource "azurerm_network_interface" "nic" {
   name                = "${var.prefix}-nic"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+  location            = data.azurerm_resource_group.resource_group.location
+  resource_group_name = data.azurerm_resource_group.resource_group.name
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = azurerm_subnet.subnet.id
+    subnet_id                     = data.azurerm_subnet.subnet.id
     private_ip_address_allocation = "Dynamic"
   }
 }
 
-resource "azurerm_linux_virtual_machine" "vm" {
+resource "azurerm_virtual_machine" "vm" {
   name                = "${var.prefix}-vm"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  size                = var.vm_size
-  admin_username      = var.admin_username
+  resource_group_name = data.azurerm_resource_group.resource_group.name
+  location            = var.location
+  vm_size                = var.vm_size
   network_interface_ids = [
     azurerm_network_interface.nic.id,
   ]
-  source_image_id     = var.golden_image_id
+  delete_os_disk_on_termination = true
 
-  admin_ssh_key {
-    username   = var.admin_username
-    public_key = file(var.ssh_public_key_path)
-  }
-
-  os_disk {
+  storage_os_disk {
+    name = "AzureAMIImage"
     caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
+    create_option = "fromImage"
+    managed_disk_type = "Standard_LRS"
   }
+
+storage_image_reference {
+  id = data.azurerm_shared_image_version.ServerImage.id
+}
+
+os_profile {
+  computer_name = "ubuntu-server"
+  admin_username = var.admin_username
+}
+
+os_profile_linux_config {
+  disable_password_authentication = true
+  ssh_keys {
+    path = "/home/azureuser/.ssh/authorized_keys"
+    key_data = file("${var.az_pub_key}")
+  }
+}
+
 }
