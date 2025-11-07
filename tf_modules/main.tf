@@ -51,10 +51,6 @@ resource "azurerm_virtual_machine" "vm" {
     managed_disk_type = "Standard_LRS"
   }
 
-storage_image_reference {
-  id = data.azurerm_shared_image_version.ServerImage.id
-}
-
 os_profile {
   computer_name = "ubuntu-server"
   admin_username = var.admin_username
