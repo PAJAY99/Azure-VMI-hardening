@@ -47,12 +47,6 @@ variable "image_definition" {
   default = ""
 }
 
-variable "location" {
-  type        = string
-  default     = "East US"
-  description = "Azure region"
-}
-
 variable "virtual_network_name" {
   type        = string
   default     = "Azure_VNet_AMI"
@@ -79,12 +73,6 @@ variable "prefix" {
   type        = string
   default     = "tf"
   description = "Prefix for naming resources"
-}
-
-variable "vm_size" {
-  type        = string
-  default     = "Standard_L2aos_v4"
-  description = "Size of the virtual machine"
 }
 
 variable "az_pub_key" {
