@@ -44,7 +44,7 @@ variable "image_version" {
 }
 
 variable "image_name" {
-  default = "AzureGoldenAMI"
+  default = "golden-ubuntu-image"
 }
 
 variable "virtual_network_name" {
