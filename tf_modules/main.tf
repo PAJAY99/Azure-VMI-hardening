@@ -22,13 +22,6 @@ data "azurerm_subnet" "subnet" {
   resource_group_name = var.resource_group_name
 }
 
-data "azurerm_shared_image_version" "ServerImage" {
-  name = var.image_version
-  image_name = var.image_name
-  gallery_name = var.gallery_name
-  resource_group_name = var.resource_group_name
-}
-
 resource "azurerm_network_interface" "nic" {
   name                = "${var.prefix}-nic"
   location            = data.azurerm_resource_group.resource_group.location
