@@ -11,6 +11,26 @@ packer {
   }
 }
 
+variable "client_id" {
+  type    = string
+  default = ""
+}
+
+variable "client_secret" {
+  type    = string
+  default = ""
+}
+
+variable "tenant_id" {
+  type    = string
+  default = ""
+}
+
+variable "subscription_id" {
+  type    = string
+  default = ""
+}
+
 variable "location" {
   type    = string
   default = "East US"
@@ -22,6 +42,10 @@ variable "vm_size" {
 }
 
 source "azure-arm" "ubuntu" {
+  client_id       = var.client_id
+  client_secret   = var.client_secret
+  tenant_id       = var.tenant_id
+  subscription_id = var.subscription_id
 
   location             = var.location
   vm_size              = var.vm_size
