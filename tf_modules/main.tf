@@ -58,10 +58,5 @@ os_profile {
 
 os_profile_linux_config {
   disable_password_authentication = true
-  ssh_keys {
-    path = "/home/azureuser/.ssh/authorized_keys"
-    key_data = file("${var.az_pub_key}")
   }
-}
-
 }
