@@ -41,6 +41,30 @@ variable "vm_size" {
   default = "Standard_DC1s_v3"
 }
 
+variable "gallery_resource_group" {
+  type = string
+  default = "AzureAMI"
+}
+
+variable "image_version" {
+  type = string
+  default = "1.0.0"
+}
+
+variable "image_name" {
+  type = string
+  default = "golden-ubuntu-image-${local.timestamp}"
+}
+
+variable "gallery_name" {
+  type = string
+  default = "Ubuntu_AMI"
+}
+
+locals {
+  timestamp = regex_replace(timestamp(), "[- TZ:]", "")
+}
+
 source "azure-arm" "ubuntu" {
   client_id       = var.client_id
   client_secret   = var.client_secret
@@ -54,11 +78,16 @@ source "azure-arm" "ubuntu" {
   image_offer          = "0001-com-ubuntu-server-jammy"
   image_sku            = "22_04-lts-gen2"
   image_version        = "latest"
-  managed_image_name   = "golden-ubuntu-image-${timestamp()}"
-  managed_image_resource_group_name = "AzureAMI"
-  resource_group_name  = "packer-temp"
-  capture_container_name = "images"
-  capture_name_prefix  = "golden"
+
+  
+shared_image_gallery_destination {
+    resource_group         = var.gallery_resource_group
+    gallery_name           = var.gallery_name
+    image_name             = var.image_name
+    image_version          = var.image_version
+    replication_regions    = var.replication_regions
+    storage_account_type   = "Standard_LRS"
+  }
 }
 
 build {
