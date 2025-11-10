@@ -39,10 +39,6 @@ variable "subnet_name" {
   default = "default"
 }
 
-variable "image_version" {
-  default = "latest"
-}
-
 variable "image_name" {
   default = "golden-ubuntu-image"
 }
@@ -65,13 +61,9 @@ variable "subnet_prefix" {
   description = "Subnet address prefix"
 }
 
-variable "gallery_name" {
-  default = "AMIImages"
-}
-
 variable "prefix" {
   type        = string
-  default     = "tf"
+  default     = "GoldenAMI"
   description = "Prefix for naming resources"
 }
 

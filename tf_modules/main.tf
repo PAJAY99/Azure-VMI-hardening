@@ -18,7 +18,7 @@ data "azurerm_subnet" "subnet" {
 }
 
 resource "azurerm_network_interface" "nic" {
-  name                = "${var.prefix}-nic"
+  name                = "${var.prefix}-${timestamp()}-nic"
   location            = data.azurerm_resource_group.resource_group.location
   resource_group_name = data.azurerm_resource_group.resource_group.name
 
@@ -31,7 +31,7 @@ resource "azurerm_network_interface" "nic" {
 
 
 resource "azurerm_virtual_machine" "vm" {
-  name                  = "${var.prefix}-vm"
+  name                  = "${var.prefix}-${timestamp()}-vm"
   resource_group_name   = data.azurerm_resource_group.resource_group.name
   location              = var.location
   vm_size               = var.vm_size
@@ -46,7 +46,7 @@ resource "azurerm_virtual_machine" "vm" {
   }
 
   storage_os_disk {
-    name              = "AzureAMIImage"
+    name              = "AzureAMIImage-${timestamp()}"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
