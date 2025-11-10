@@ -9,10 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       az_pub_key: ${{ secrets.SSH_KEY }}
-      TF_VAR_CLIENT_ID: ${{secrets.CLIENT_ID}}
-      TF_VAR_CLIENT_SECRET: ${{secrets.CLIENT_SECRET}}
-      TF_VAR_SUBSCRIPTION_ID: ${{secrets.SUBSCRIPTION_ID}}
-      TF_VAR_TENANT_ID: ${{secrets.TENANT_ID}}
+      CLIENT_ID: ${{secrets.CLIENT_ID}}
+      CLIENT_SECRET: ${{secrets.CLIENT_SECRET}}
+      SUBSCRIPTION_ID: ${{secrets.SUBSCRIPTION_ID}}
+      TENANT_ID: ${{secrets.TENANT_ID}}
       
     steps:
       - name: Checkout Code
