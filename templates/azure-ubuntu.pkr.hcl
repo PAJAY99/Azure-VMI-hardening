@@ -80,7 +80,10 @@ source "azure-arm" "ubuntu" {
   image_version        = "latest"
 
   
-shared_image_gallery_destination {
+  managed_image_resource_group_name = "AzureAMI"
+  managed_image_name                = "golden-ubuntu-image"
+  
+  shared_image_gallery_destination {
     resource_group         = var.gallery_resource_group
     gallery_name           = var.gallery_name
     image_name             = var.image_name
