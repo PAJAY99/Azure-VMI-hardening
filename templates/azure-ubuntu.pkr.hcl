@@ -70,7 +70,7 @@ source "azure-arm" "ubuntu" {
   
   shared_image_gallery_destination {
     gallery_name     = "UbuntuAMI"
-    image_name       = "golden-ubuntu-image-0.0.1"
+    image_name       = "golden-ubuntu-image"
     resource_group   = "AzureAMI"
     replication_regions = ["East US"]
     image_version = var.image_version
