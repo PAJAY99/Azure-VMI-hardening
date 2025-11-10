@@ -85,7 +85,6 @@ shared_image_gallery_destination {
     gallery_name           = var.gallery_name
     image_name             = var.image_name
     image_version          = var.image_version
-    replication_regions    = var.replication_regions
     storage_account_type   = "Standard_LRS"
   }
 }
