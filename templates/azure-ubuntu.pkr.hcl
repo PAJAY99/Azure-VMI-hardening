@@ -43,7 +43,7 @@ variable "vm_size" {
 
 variable "image_version" {
   type = string
-  default = "1.0.0"
+  default = "1.0.2"
 }
 
 locals {
@@ -70,7 +70,7 @@ source "azure-arm" "ubuntu" {
   
   shared_image_gallery_destination {
     gallery_name     = "Ubuntu_AMI"
-    image_name       = "golden-ubuntu-image"
+    image_name       = "golden-ubuntu-image-20251110124718"
     resource_group   = "AzureAMI"
     replication_regions = ["East US"]
     image_version = var.image_version
