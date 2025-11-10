@@ -25,7 +25,7 @@ variable "location" {
 
 variable "vm_size" {
   type    = string
-  default = "Standard_L2aos_v4"
+  default = "Standard_DS2_v2"
 }
 
 
