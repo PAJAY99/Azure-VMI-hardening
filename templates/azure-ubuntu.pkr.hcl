@@ -41,6 +41,11 @@ variable "vm_size" {
   default = "Standard_DC1s_v3"
 }
 
+variable "image_version" {
+  type = string
+  default = "1.0.0"
+}
+
 locals {
   timestamp = regex_replace(timestamp(), "[- TZ:]", "")
 }
