@@ -53,7 +53,7 @@ variable "image_version" {
 
 variable "image_name" {
   type = string
-  default = "golden-ubuntu-image-${local.timestamp}"
+  default = "golden-ubuntu-image"
 }
 
 variable "gallery_name" {
