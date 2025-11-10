@@ -54,7 +54,7 @@ source "azure-arm" "ubuntu" {
   image_offer          = "0001-com-ubuntu-server-jammy"
   image_sku            = "22_04-lts-gen2"
   image_version        = "latest"
-  managed_image_name   = "golden-ubuntu-image"
+  managed_image_name   = "golden-ubuntu-image-${timestamp()}"
   managed_image_resource_group_name = "AzureAMI"
   resource_group_name  = "packer-temp"
   capture_container_name = "images"
