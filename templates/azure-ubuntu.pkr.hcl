@@ -73,6 +73,7 @@ source "azure-arm" "ubuntu" {
     image_name       = "golden-ubuntu-image"
     resource_group   = "AzureAMI"
     replication_regions = ["East US"]
+    image_version = var.image_version
   }
 
 }
