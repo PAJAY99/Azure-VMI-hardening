@@ -31,6 +31,13 @@ jobs:
       - name: Build AMI
         run: packer build templates/azure-ubuntu.pkr.hcl
 
+      - name: Write public key to file
+        run: |
+          mkdir -p ~/.ssh
+          az_pub_key = ${{secrets.SSH_KEY}}  
+          echo "$az_pub_key" > ~/.ssh/id_rsa.pub
+          chmod 600 ~/.ssh/id_rsa.pub
+
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
@@ -41,5 +48,6 @@ jobs:
           cd tf_modules
           terraform init
           terraform validate
-          terraform apply -auto-approve
+          terraform plan -var "az_pub_key"=~/.ssh/id_rsa.pub"
+          terraform apply -auto-approve -var "az_pub_key"=~/.ssh/id_rsa.pub"
 
