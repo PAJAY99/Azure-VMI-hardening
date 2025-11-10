@@ -7,6 +7,8 @@ on:
 jobs:
   packer_install_and_build:
     runs-on: ubuntu-latest
+    env:
+      az_pub_key: ${{ secrets.SSH_KEY }}
 
     steps:
       - name: Checkout Code
@@ -33,8 +35,7 @@ jobs:
 
       - name: Write public key to file
         run: |
-          mkdir -p ~/.ssh
-          az_pub_key = ${{secrets.SSH_KEY}}  
+          mkdir -p ~/.ssh 
           echo "$az_pub_key" > ~/.ssh/id_rsa.pub
           chmod 600 ~/.ssh/id_rsa.pub
 
