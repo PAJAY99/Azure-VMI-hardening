@@ -9,22 +9,19 @@ jobs:
     runs-on: ubuntu-latest
     env:
       az_pub_key: ${{ secrets.SSH_KEY }}
-      service_principles: ${{secrets.AZURE_CREDENTIALS}}
+      CLIENT_ID: ${{secrets.CLIENT_ID}}
+      CLIENT_SECRET: ${{secrets.CLIENT_SECRET}}
+      SUBSCRIPTION_ID: ${{secrets.SUBSCRIPTION_ID}}
+      TENANT_ID: ${{secrets.TENANT_ID}}
       
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Azure Login
-        run: |
-          subscription_id=$(jq -r .subscription_id <<< "$service_principles")
-          client_id=$(jq -r .client_id <<< "$service_principles")
-          tenant_id=$(jq -r .tenant_id <<< "$service_principles")
-          client_secret=$(jq -r .client_secret <<< "$service_principles")
-          echo "azure_subscription_id=$subscription_id" >> $GITHUB_ENV
-          echo "azure_client_id=$client_id" >> $GITHUB_ENV
-          echo "azure_tenant_id=$tenant_id" >> $GITHUB_ENV
-          echo "azure_client_secret=$client_secret" >> $GITHUB_ENV
+        uses: Azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Setup Packer
         uses: hashicorp/setup-packer@v3.1.0

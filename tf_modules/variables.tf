@@ -1,21 +1,25 @@
-variable "client_id" {
+variable "CLIENT_ID" {
+  default = env(CLIENT_ID)
+  description = "client's id"
   type    = string
-  default = "db245360-7c18-4d9b-bf5e-85d6013e91ea"
 }
 
-variable "client_secret" {
+variable "CLIENT_SECRET" {
+  default = env(CLIENT_SECRET)
+  description = "client's secret"
   type    = string
-  default = "q3s8Q~ZGT83UZV6NtwhFpfgS9PQIshtcAH8b~ar~"
 }
 
-variable "tenant_id" {
+variable "TENANT_ID" {
+  default = env(TENANT_ID)
+  description = "tenant's id"
   type    = string
-  default = "95bdb50c-a497-4bcf-8fa1-9088dc83f67d"
 }
 
-variable "subscription_id" {
+variable "SUBSCRIPTION_ID" {
+  default = env(SUBSCRIPTION_ID)
+  description = "subscription id"
   type    = string
-  default = "2c8e92b4-8e2f-4252-af6e-c25fee6f3496"
 }
 
 variable "location" {

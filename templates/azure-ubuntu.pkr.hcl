@@ -13,22 +13,22 @@ packer {
 
 variable "client_id" {
   type    = string
-  default = env("azure_client_id")
+  default = env("CLIENT_ID")
 }
 
 variable "client_secret" {
   type    = string
-  default = env("azure_client_secret")
+  default = env("CLIENT_SECRET")
 }
 
 variable "tenant_id" {
   type    = string
-  default = env("azure_tenant_id")
+  default = env("TENANT_ID")
 }
 
 variable "subscription_id" {
   type    = string
-  default = env("azure_subscription_id")
+  default = env("SUBSCRIPTION_ID")
 }
 
 variable "location" {
