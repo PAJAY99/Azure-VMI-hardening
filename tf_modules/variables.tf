@@ -76,7 +76,7 @@ variable "prefix" {
 }
 
 variable "az_pub_key" {
-  default = ""
+  default = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC7HEGVecxC8TC4i/dpzJ49EqIApHOthx0AOLjEm7xuZ0vGO/VA88DpDn6fVAyMn4dtc1VqrKjdvAkW1aZgjoxEm6ZOgRUubF8N98ru33FaUIN9H1nhO7/3b0WAJ2/XaXwmDlI5mLUNw2wPaFXpoCh12iXRm5fL/571MjUT/TUKIN9Hi8u99lGSUCJod6ua73vkEJxRypK36DrGEEKe7wG7N4KyyaiLzUov24dghc8zF1Zcz5PGWAajq5lydY9PhCRQSVDOcER3/0MmIH2CQid+GakTzaEdf1A9egFLe/lU73jsj5CKcXP/WnUh7shoHBHQQ1hv5QB9xqSErGTf77MawX0I72BP2UKCIyNegHu1hUc3Ukpy53SUqv8JOX0Xv38br49UsdKNwqQd9KWg+WKhxqofDb6mPPKQvKhCU9X/+zyqMeObUasZDxBXBoCdgeXBPzkmjxM+DtjPf4wuA/7q4i9zUz0qF2XyGLeCkcyX6SL5J/G4Q4p1T/x8gsl3as0= generated-by-azure"
 }
 
 variable "admin_username" {
