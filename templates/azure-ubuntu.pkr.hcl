@@ -13,22 +13,22 @@ packer {
 
 variable "client_id" {
   type    = string
-  default = env("CLIENT_ID")
+  default = env("TF_VAR_CLIENT_ID")
 }
 
 variable "client_secret" {
   type    = string
-  default = env("CLIENT_SECRET")
+  default = env("TF_VAR_CLIENT_SECRET")
 }
 
 variable "tenant_id" {
   type    = string
-  default = env("TENANT_ID")
+  default = env("TF_VAR_TENANT_ID")
 }
 
 variable "subscription_id" {
   type    = string
-  default = env("SUBSCRIPTION_ID")
+  default = env("TF_VAR_SUBSCRIPTION_ID")
 }
 
 variable "location" {

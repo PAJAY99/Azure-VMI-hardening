@@ -1,23 +1,19 @@
 variable "CLIENT_ID" {
-  default = env(CLIENT_ID)
   description = "client's id"
   type    = string
 }
 
 variable "CLIENT_SECRET" {
-  default = env(CLIENT_SECRET)
   description = "client's secret"
   type    = string
 }
 
 variable "TENANT_ID" {
-  default = env(TENANT_ID)
   description = "tenant's id"
   type    = string
 }
 
 variable "SUBSCRIPTION_ID" {
-  default = env(SUBSCRIPTION_ID)
   description = "subscription id"
   type    = string
 }
