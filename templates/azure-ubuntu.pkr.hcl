@@ -41,26 +41,6 @@ variable "vm_size" {
   default = "Standard_DC1s_v3"
 }
 
-variable "gallery_resource_group" {
-  type = string
-  default = "AzureAMI"
-}
-
-variable "image_version" {
-  type = string
-  default = "1.0.0"
-}
-
-variable "image_name" {
-  type = string
-  default = "golden-ubuntu-image"
-}
-
-variable "gallery_name" {
-  type = string
-  default = "Ubuntu_AMI"
-}
-
 locals {
   timestamp = regex_replace(timestamp(), "[- TZ:]", "")
 }
@@ -84,12 +64,12 @@ source "azure-arm" "ubuntu" {
   managed_image_name                = "golden-ubuntu-image"
   
   shared_image_gallery_destination {
-    resource_group         = var.gallery_resource_group
-    gallery_name           = var.gallery_name
-    image_name             = var.image_name
-    image_version          = var.image_version
-    storage_account_type   = "Standard_LRS"
+    gallery_name     = "Ubuntu_AMI"
+    image_name       = "golden-ubuntu-image"
+    resource_group   = "AzureAMI"
+    replication_regions = ["East US"]
   }
+
 }
 
 build {
