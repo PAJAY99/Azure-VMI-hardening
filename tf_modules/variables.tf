@@ -76,7 +76,8 @@ variable "prefix" {
 }
 
 variable "az_pub_key" {
-  default = ""
+  description = "Path to the public SSH key"
+  type        = string
 }
 
 variable "admin_username" {

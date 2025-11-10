@@ -49,6 +49,6 @@ jobs:
           cd tf_modules
           terraform init
           terraform validate
-          terraform plan -var "az_pub_key"=~/.ssh/id_rsa.pub"
-          terraform apply -auto-approve -var "az_pub_key"=~/.ssh/id_rsa.pub"
+          terraform plan -var="az_pub_key=~/.ssh/id_rsa.pub"
+          terraform apply -auto-approve -var="az_pub_key=~/.ssh/id_rsa.pub"
 
