@@ -10,7 +10,7 @@ jobs:
     env:
       az_pub_key: ${{ secrets.SSH_KEY }}
       service_principles: ${{ secrets.AZURE_CREDENTIALS }}
-
+      
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -20,7 +20,11 @@ jobs:
           subscription_id=$(jq -r .subscription_id <<< "$service_principles")
           client_id=$(jq -r .client_id <<< "$service_principles")
           tenant_id=$(jq -r .tenant_id <<< "$service_principles")
-          tenant_id=$(jq -r .tenant_id <<< "$service_principles")
+          client_secret=$(jq -r .client_secret <<< "$service_principles")
+          echo $client_id
+          echo $tenant_id
+          echo $subscription_id
+          echo $client_secret
 
       - name: Setup Packer
         uses: hashicorp/setup-packer@v3.1.0
