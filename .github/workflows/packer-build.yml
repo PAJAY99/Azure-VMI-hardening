@@ -9,15 +9,18 @@ jobs:
     runs-on: ubuntu-latest
     env:
       az_pub_key: ${{ secrets.SSH_KEY }}
+      service_principles: ${{ secrets.AZURE_CREDENTIALS }}
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Azure Login
-        uses: Azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+        run: |
+          subscription_id=$(jq -r .subscription_id <<<<"${service_principles}")
+          client_id=$(jq -r .client_id <<<<"${service_principles}")
+          tenant_id=$(jq -r .tenant_id <<<<"${service_principles}")
+          tenant_id=$(jq -r .tenant_id <<<<"${service_principles}")
 
       - name: Setup Packer
         uses: hashicorp/setup-packer@v3.1.0
