@@ -17,10 +17,10 @@ jobs:
 
       - name: Azure Login
         run: |
-          subscription_id=$(jq -r .subscription_id <<<<"${service_principles}")
-          client_id=$(jq -r .client_id <<<<"${service_principles}")
-          tenant_id=$(jq -r .tenant_id <<<<"${service_principles}")
-          tenant_id=$(jq -r .tenant_id <<<<"${service_principles}")
+          subscription_id=$(jq -r .subscription_id <<< "$service_principles")
+          client_id=$(jq -r .client_id <<< "$service_principles")
+          tenant_id=$(jq -r .tenant_id <<< "$service_principles")
+          tenant_id=$(jq -r .tenant_id <<< "$service_principles")
 
       - name: Setup Packer
         uses: hashicorp/setup-packer@v3.1.0
