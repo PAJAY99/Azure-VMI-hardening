@@ -65,13 +65,13 @@ source "azure-arm" "ubuntu" {
   image_version        = "latest"
 
   
-  managed_image_resource_group_name = "AzureAMI"
-  managed_image_name                = "golden-ubuntu-image-ami-${local.timestamp}"
+  managed_image_resource_group_name = "AzureVMI"
+  managed_image_name                = "golden-ubuntu-vmi-${local.timestamp}"
   
   shared_image_gallery_destination {
-    gallery_name     = "UbuntuAMI"
+    gallery_name     = "UbuntuVMI"
     image_name       = "golden-ubuntu-image"
-    resource_group   = "AzureAMI"
+    resource_group   = "AzureVMI"
     replication_regions = ["East US"]
     image_version = var.image_version
   }

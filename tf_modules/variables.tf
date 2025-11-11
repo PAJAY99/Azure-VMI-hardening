@@ -31,7 +31,7 @@ variable "vm_size" {
 
 variable "resource_group_name" {
   type        = string
-  default     = "AzureAMI"
+  default     = "AzureVMI"
   description = "Name of the resource group"
 }
 
@@ -40,12 +40,12 @@ variable "subnet_name" {
 }
 
 variable "image_name" {
-  default = "golden-ubuntu-image"
+  default = "golden-ubuntu-vmi"
 }
 
 variable "virtual_network_name" {
   type        = string
-  default     = "Azure_VNet_AMI"
+  default     = "Azure_VNet_VMI"
   description = "Name of the virtual network"
 }
 
@@ -63,7 +63,7 @@ variable "subnet_prefix" {
 
 variable "prefix" {
   type        = string
-  default     = "GoldenAMI"
+  default     = "GoldenVMI"
   description = "Prefix for naming resources"
 }
 

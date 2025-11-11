@@ -46,7 +46,7 @@ resource "azurerm_virtual_machine" "vm" {
   }
 
   storage_os_disk {
-    name              = "AzureAMIImage_${formatdate("YYYYMMDDhhmm", timestamp())}"
+    name              = "AzureVMImage_${formatdate("YYYYMMDDhhmm", timestamp())}"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
