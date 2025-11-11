@@ -1,4 +1,4 @@
-name: Build AMI and create VM instance with Golden AMI
+name: Build Azure VMI and create VM instance with Golden Azure VMI
 
 on:
   workflow_dispatch:
