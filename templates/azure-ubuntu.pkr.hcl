@@ -66,7 +66,7 @@ source "azure-arm" "ubuntu" {
 
   
   managed_image_resource_group_name = "AzureAMI"
-  managed_image_name                = "golden-ubuntu-image-ami-${timestamp()}"
+  managed_image_name                = "golden-ubuntu-image-ami"
   
   shared_image_gallery_destination {
     gallery_name     = "UbuntuAMI"
