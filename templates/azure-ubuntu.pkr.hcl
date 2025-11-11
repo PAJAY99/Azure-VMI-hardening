@@ -66,7 +66,7 @@ source "azure-arm" "ubuntu" {
 }
 
 build {
-  name = "Golden Ubuntu Image with jq"
+  name = "Golden Ubuntu Image with jq as component"
   sources = [
     "source.azure-arm.ubuntu"
   ]
