@@ -1,0 +1,52 @@
+- name: Install and verify tools on target machines
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+
+    - name: Install tools on Debian/Ubuntu
+      apt:
+        name:
+          - jq
+          - curl
+          - unzip
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Install tools on RHEL/CentOS
+      yum:
+        name:
+          - jq
+          - curl
+          - unzip
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Verify jq installation
+      command: jq --version
+      register: jq_version
+      changed_when: false
+      failed_when: jq_version.rc != 0
+
+    - name: Verify curl installation
+      command: curl --version
+      register: curl_version
+      changed_when: false
+      failed_when: curl_version.rc != 0
+
+    - name: Verify unzip installation
+      command: unzip -v
+      register: unzip_version
+      changed_when: false
+      failed_when: unzip_version.rc != 0
+
+    - name: Display installed versions
+      debug:
+        msg:
+          - "jq: {{ jq_version.stdout }}"
+          - "curl: {{ curl_version.stdout_lines[0] }}"
+          - "unzip: {{ unzip_version.stdout_lines[0] }}"
