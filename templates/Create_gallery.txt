@@ -1,0 +1,8 @@
+az sig image-definition create \
+  --resource-group AzureAMI \
+  --gallery-name UbuntuAMI \
+  --gallery-image-definition golden-ubuntu-image \
+  --publisher Canonical \
+  --offer UbuntuServer \
+  --sku 22_04-lts-gen2 \
+  --os-type Linux
