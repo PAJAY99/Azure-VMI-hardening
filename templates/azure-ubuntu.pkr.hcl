@@ -70,7 +70,7 @@ source "azure-arm" "ubuntu" {
   
   shared_image_gallery_destination {
     gallery_name     = "UbuntuVMI"
-    image_name       = "golden-ubuntu-image"
+    image_name       = "GoldenVMI"
     resource_group   = "AzureVMI"
     replication_regions = ["East US"]
     image_version = var.image_version

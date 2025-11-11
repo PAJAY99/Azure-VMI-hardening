@@ -1,7 +1,7 @@
 az sig image-definition create \
   --resource-group AzureVMI \
   --gallery-name UbuntuVMI \
-  --gallery-image-definition golden-ubuntu-vmi \
+  --gallery-image-definition GoldenVMI \
   --publisher Canonical \
   --offer UbuntuServer \
   --sku 22_04-lts-gen2 \

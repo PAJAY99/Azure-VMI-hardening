@@ -38,7 +38,7 @@ jobs:
       - name: Validate Packer template
         run: packer validate templates/azure-ubuntu.pkr.hcl
 
-      - name: Build AMI
+      - name: Build AVI
         run: packer build -var "image_version=${{ github.event.inputs.image_version }}" templates/azure-ubuntu.pkr.hcl
 
       - name: Write public key to file
