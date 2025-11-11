@@ -1,8 +1,9 @@
 name: Build AMI and create VM instance with Golden AMI
+
 on:
- push:
-  branches: 
-    - main 
+  push:
+    branches:
+      - develop 
 
 jobs:
   packer_install_and_build:
@@ -22,6 +23,9 @@ jobs:
         uses: Azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: build-image
+        run: sh build-image.sh
 
       - name: Setup Packer
         uses: hashicorp/setup-packer@v3.1.0
