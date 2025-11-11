@@ -22,7 +22,7 @@ locals {
 }
 
 resource "azurerm_network_interface" "nic" {
-  name                = "${var.prefix}-${timestamp()}-nic"
+  name                = "${var.prefix}_${formatdate("YYYYMMDDhh", timestamp())}-nic"
   location            = data.azurerm_resource_group.resource_group.location
   resource_group_name = data.azurerm_resource_group.resource_group.name
 
@@ -35,7 +35,7 @@ resource "azurerm_network_interface" "nic" {
 
 
 resource "azurerm_virtual_machine" "vm" {
-  name                  = "${var.prefix}-${timestamp()}-vm"
+  name                  = "${var.prefix}_${formatdate("YYYYMMDDhh", timestamp())}-vm"
   resource_group_name   = data.azurerm_resource_group.resource_group.name
   location              = var.location
   vm_size               = var.vm_size
@@ -50,7 +50,7 @@ resource "azurerm_virtual_machine" "vm" {
   }
 
   storage_os_disk {
-    name              = "AzureAMIImage-${timestamp()}"
+    name              = "AzureAMIImage_${formatdate("YYYYMMDDhh", timestamp())}"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
