@@ -3,6 +3,10 @@
   become: yes
 
   tasks:
+    - name: Enable universe repository (Ubuntu/Debian)
+      command: add-apt-repository universe
+      when: ansible_os_family == "Debian"
+
     - name: Update apt cache
       apt:
         update_cache: yes
@@ -32,21 +36,6 @@
       changed_when: false
       failed_when: jq_version.rc != 0
 
-    - name: Verify curl installation
-      command: curl --version
-      register: curl_version
-      changed_when: false
-      failed_when: curl_version.rc != 0
-
-    - name: Verify unzip installation
-      command: unzip -v
-      register: unzip_version
-      changed_when: false
-      failed_when: unzip_version.rc != 0
-
-    - name: Display installed versions
+    - name: Display jq version
       debug:
-        msg:
-          - "jq: {{ jq_version.stdout }}"
-          - "curl: {{ curl_version.stdout_lines[0] }}"
-          - "unzip: {{ unzip_version.stdout_lines[0] }}"
+        msg: "jq is installed: {{ jq_version.stdout }}"
