@@ -27,9 +27,6 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: build-image
-        run: sh build-image.sh
-
       - name: Setup Packer
         uses: hashicorp/setup-packer@v3.1.0
         with:
