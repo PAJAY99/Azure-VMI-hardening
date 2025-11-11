@@ -17,10 +17,6 @@ data "azurerm_subnet" "subnet" {
   resource_group_name = var.resource_group_name
 }
 
-locals {
-  timestamp = regex_replace(timestamp(), "[- TZ:]", "")
-}
-
 resource "azurerm_network_interface" "nic" {
   name                = "${var.prefix}_${formatdate("YYYYMMDDhh", timestamp())}-nic"
   location            = data.azurerm_resource_group.resource_group.location
