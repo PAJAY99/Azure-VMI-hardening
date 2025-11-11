@@ -43,7 +43,7 @@ variable "vm_size" {
 
 variable "image_version" {
   type = string
-  default = "1.0.2"
+  default = "1.0.8"
 }
 
 locals {
@@ -66,7 +66,7 @@ source "azure-arm" "ubuntu" {
 
   
   managed_image_resource_group_name = "AzureAMI"
-  managed_image_name                = "golden-ubuntu-image"
+  managed_image_name                = "golden-ubuntu-image-ami"
   
   shared_image_gallery_destination {
     gallery_name     = "UbuntuAMI"

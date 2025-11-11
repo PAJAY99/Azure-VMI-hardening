@@ -1,8 +1,12 @@
 name: Build AMI and create VM instance with Golden AMI
+
 on:
- push:
-  branches: 
-    - develop 
+  workflow_dispatch:
+    inputs:
+      image_version:
+        description: "Enter the image version (format: Major.Minor.Patch)"
+        required: true
+        default: "1.0.8" 
 
 jobs:
   packer_install_and_build:
@@ -38,7 +42,7 @@ jobs:
         run: packer validate templates/azure-ubuntu.pkr.hcl
 
       - name: Build AMI
-        run: packer build templates/azure-ubuntu.pkr.hcl
+        run: packer build -var "image_version=${{ github.event.inputs.image_version }}" templates/azure-ubuntu.pkr.hcl
 
       - name: Write public key to file
         run: |
