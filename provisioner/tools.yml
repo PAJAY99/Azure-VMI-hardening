@@ -1,4 +1,4 @@
-- name: Install and verify tools on target machines
+- name: Install tools on target machines
   hosts: all
   become: yes
 
@@ -29,13 +29,3 @@
           - unzip
         state: present
       when: ansible_os_family == "RedHat"
-
-    - name: Verify jq installation
-      command: jq --version
-      register: jq_version
-      changed_when: false
-      failed_when: jq_version.rc != 0
-
-    - name: Display jq version
-      debug:
-        msg: "jq is installed: {{ jq_version.stdout }}"

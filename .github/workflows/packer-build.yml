@@ -68,3 +68,12 @@ jobs:
           -var "TENANT_ID=${{ secrets.TENANT_ID }}" \
           -var "SUBSCRIPTION_ID=${{ secrets.SUBSCRIPTION_ID }}"
 
+
+      - name: UnitTest
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: False
+        run: |
+          ansible-playbook -i ~/inventory UnitTests/Unit_test.yaml" \
+            --private-key ${{ secrets.PRIVATE_AZURE_SSH_KEY }} \
+            --user azureuser \
+            -e "ansible_ssh_common_tags='-o StrictHostKeyChecking=no'" 2>&1
