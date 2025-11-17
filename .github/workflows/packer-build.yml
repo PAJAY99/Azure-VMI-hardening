@@ -74,6 +74,7 @@ jobs:
       - name: Extract VM IP
         run: |
           cd tf_modules
+          ls
           ip=$(terraform output -raw instance_ip 2>/dev/null || echo "")
           if [[ "$ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "$ip" > ~/inventory
