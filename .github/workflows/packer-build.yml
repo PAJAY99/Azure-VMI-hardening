@@ -76,7 +76,8 @@ jobs:
           cd tf_modules
           ls
           ip=$(terraform output -raw instance_ip)
-          echo "INSTANCE_IP=$ip" >> $GITHUB_ENV
+          export INSTANCE_IP="$ip"
+          echo "$INSTANCE_IP"
 
       - name: UnitTest
         env:
