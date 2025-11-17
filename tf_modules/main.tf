@@ -17,6 +17,15 @@ data "azurerm_subnet" "subnet" {
   resource_group_name = var.resource_group_name
 }
 
+
+resource "azurerm_public_ip" "public_ip" {
+  name                = "public-ip_${formatdate("YYYYMMDDhhmm", timestamp())}"
+  location            = azurerm_resource_group.resource_group.location
+  resource_group_name = azurerm_resource_group.resource_group.name
+  allocation_method   = "Dynamic"
+}
+
+
 resource "azurerm_network_interface" "nic" {
   name                = "${var.prefix}_${formatdate("YYYYMMDDhhmm", timestamp())}-nic"
   location            = data.azurerm_resource_group.resource_group.location
