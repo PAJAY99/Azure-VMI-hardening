@@ -70,16 +70,25 @@ jobs:
 
       - name: Get Terraform Output and Set Environment Variables
         run: |
-          ip=$(terraform output -raw instance_ip)
-          echo "$ip" > ~/inventory
-          echo "INSTANCE_IP=$ip" >> $GITHUB_ENV
-          echo "ip=$ip" >> $GITHUB_OUTPUT
-    
+          
+      - name: Extract VM IP
+        run: |
+          cd terraform
+          ip=$(terraform output -raw instance_ip 2>/dev/null || echo "")
+          if [[ "$ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "$ip" > ~/inventory
+            echo "INSTANCE_IP=$ip" >> $GITHUB_ENV
+            echo "ip=$ip" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Invalid IP or Terraform output failed"
+            exit 1
+          fi
+
       - name: UnitTest
         env:
           ANSIBLE_HOST_KEY_CHECKING: False
         run: |
-          ansible-playbook -i ~/inventory UnitTests/Unit_test.yaml \
-          --private-key "${{ secrets.PRIVATE_AZURE_SSH_KEY }}" \
-          --user azureuser \
-          -e 'ansible_ssh_common_args="-o StrictHostKeyChecking=no"'
+          ansible-playbook -i "$INSTANCE_IP," UnitTests/Unit_test.yaml \
+            --private-key "${{ secrets.PRIVATE_AZURE_SSH_KEY }}" \
+            --user azureuser \
+            -e 'ansible_ssh_common_args="-o StrictHostKeyChecking=no"'
