@@ -20,8 +20,8 @@ data "azurerm_subnet" "subnet" {
 
 resource "azurerm_public_ip" "public_ip" {
   name                = "public-ip_${formatdate("YYYYMMDDhhmm", timestamp())}"
-  location            = azurerm_resource_group.resource_group.location
-  resource_group_name = azurerm_resource_group.resource_group.name
+  location            = data.azurerm_resource_group.resource_group.location
+  resource_group_name = data.azurerm_resource_group.resource_group.name
   allocation_method   = "Dynamic"
 }
 
