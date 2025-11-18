@@ -1,0 +1,35 @@
+- name: Verify tools on target machines as a Unit test
+  hosts: all
+  gather_facts: true
+  become: yes
+
+  tasks:
+    - name: Check jq installation and version
+      command: jq --version
+      register: jq_check
+      changed_when: false
+      ignore_errors: yes
+
+    - name: Print jq version or missing message
+      debug:
+        msg: "{{ 'jq is installed: ' ~ jq_check.stdout if jq_check.rc == 0 else 'jq is NOT installed' }}"
+
+    - name: Check curl installation and version
+      command: curl --version
+      register: curl_check
+      changed_when: false
+      ignore_errors: yes
+
+    - name: Print curl version or missing message
+      debug:
+        msg: "{{ 'curl is installed: ' ~ curl_check.stdout.split('\n')[0] if curl_check.rc == 0 else 'curl is NOT installed' }}"
+
+    - name: Check unzip installation and version
+      command: unzip -v
+      register: unzip_check
+      changed_when: false
+      ignore_errors: yes
+
+    - name: Print unzip version or missing message
+      debug:
+        msg: "{{ 'unzip is installed: ' ~ unzip_check.stdout.split('\n')[0] if unzip_check.rc == 0 else 'unzip is NOT installed' }}"
