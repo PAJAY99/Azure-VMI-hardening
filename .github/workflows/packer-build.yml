@@ -67,7 +67,7 @@ jobs:
       - name: Extract VM Public IP and Create Inventory
         run: |
           cd tf_modules
-          ip=$(terraform output -raw instance_ip 2>/dev/null | sed -E 's/[^0-9\.].*//' || true)
+          ip=$(terraform output -raw instance_ip 2>/dev/null | sed -E 's/[^0-9\.].*//')
           echo "[azure_vm]" > ~/inventory
           echo "$ip ansible_user=azureuser ansible_ssh_private_key_file=~/.ssh/id_rsa" >> ~/inventory
           echo "Instance IP: $ip"
