@@ -74,7 +74,6 @@ jobs:
           ls
           ip=$(terraform output -raw instance_ip 2>/dev/null | sed -E 's/[^0-9\.].*//' || true)
           echo "$ip" > ~/inventory
-          echo "INSTANCE_IP=$ip" >> $GITHUB_ENV
           echo "Instance IP: $ip"
 
       - name: UnitTest
