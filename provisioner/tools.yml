@@ -1,10 +1,20 @@
 - name: Install tools on target machines
   hosts: all
   become: yes
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
 
   tasks:
+    - name: Ensure software-properties-common is installed (Debian/Ubuntu)
+      apt:
+        name: software-properties-common
+        state: present
+      when: ansible_os_family == "Debian"
+
     - name: Enable universe repository (Ubuntu/Debian)
-      command: add-apt-repository universe
+      apt_repository:
+        repo: "deb http://archive.ubuntu.com/ubuntu {{ ansible_distribution_release }} universe"
+        state: present
       when: ansible_os_family == "Debian"
 
     - name: Update apt cache
@@ -20,6 +30,12 @@
           - unzip
         state: present
       when: ansible_os_family == "Debian"
+
+    - name: Enable EPEL repository (RHEL/CentOS)
+      yum:
+        name: epel-release
+        state: present
+      when: ansible_os_family == "RedHat"
 
     - name: Install tools on RHEL/CentOS
       yum:
