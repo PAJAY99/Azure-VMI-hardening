@@ -75,7 +75,7 @@ jobs:
         run: |
           cd tf_modules
           ls
-          ip=$(terraform output -raw instance_ip)
+          ip=$(terraform output -raw instance_ip 2>/dev/null)
           echo "$ip" > ~/inventory
           echo "INSTANCE_IP=$ip" >> "$GITHUB_ENV"
           echo "ip=$ip" >> "$GITHUB_OUTPUT"
