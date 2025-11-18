@@ -17,6 +17,25 @@ data "azurerm_subnet" "subnet" {
   resource_group_name = var.resource_group_name
 }
 
+resource "azurerm_network_security_group" "nsg" {
+  name                = "vm-nsg"
+  location            = data.azurerm_resource_group.resource_group.location
+  resource_group_name = data.azurerm_resource_group.resource_group.name
+}
+
+resource "azurerm_network_security_rule" "ssh" {
+  name                        = "Allow-SSH"
+  priority                    = 100
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "22"
+  source_address_prefix       = "*"
+  destination_address_prefix  = "*"
+  resource_group_name         = data.azurerm_resource_group.resource_group.name
+  network_security_group_name = azurerm_network_security_group.nsg.name
+}
 
 resource "azurerm_public_ip" "public_ip" {
   name                = "public-ip_${formatdate("YYYYMMDDhhmm", timestamp())}"
@@ -41,6 +60,10 @@ resource "azurerm_network_interface" "nic" {
   }
 }
 
+resource "azurerm_network_interface_security_group_association" "nic_nsg" {
+  network_interface_id      = azurerm_network_interface.nic.id
+  network_security_group_id = azurerm_network_security_group.nsg.id
+}
 
 resource "azurerm_virtual_machine" "vm" {
   name                  = "${var.prefix}_${formatdate("YYYYMMDDhhmm", timestamp())}-vm"
