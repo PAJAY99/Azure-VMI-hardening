@@ -24,10 +24,7 @@
 
     - name: Install tools on Debian/Ubuntu
       apt:
-        name:
-          - jq
-          - curl
-          - unzip
+        name: curl
         state: present
       when: ansible_os_family == "Debian"
 
@@ -39,9 +36,6 @@
 
     - name: Install tools on RHEL/CentOS
       yum:
-        name:
-          - jq
-          - curl
-          - unzip
+        name: curl
         state: present
       when: ansible_os_family == "RedHat"
