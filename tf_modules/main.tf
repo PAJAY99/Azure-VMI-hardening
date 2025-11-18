@@ -18,7 +18,7 @@ data "azurerm_subnet" "subnet" {
 }
 
 resource "azurerm_network_security_group" "nsg" {
-  name                = "vm-nsg"
+  name                = "vm-nsg_${formatdate("YYYYMMDDhhmm", timestamp())}"
   location            = data.azurerm_resource_group.resource_group.location
   resource_group_name = data.azurerm_resource_group.resource_group.name
 }
