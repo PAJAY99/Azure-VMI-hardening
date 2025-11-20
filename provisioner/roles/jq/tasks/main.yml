@@ -1,9 +1,6 @@
 ---
 # Install jq on supported OS families
 - name: Install jq on Debian/Ubuntu
-  become: yes
-  vars:
-    ansible_python_interpreter: /usr/bin/python3
   apt:
     name: jq
     state: present
