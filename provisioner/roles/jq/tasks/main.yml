@@ -1,16 +1,13 @@
 ---
-- name: Install jq on Linux
-  hosts: all
-  become: yes
-  tasks:
-    - name: Ensure jq is installed (for Debian/Ubuntu)
-      ansible.builtin.apt:
-        name: jq
-        state: present
-      when: ansible_os_family == "Debian"
+- name: Install jq on Ubuntu/Debian
+  apt:
+    name: jq
+    state: present
+    update_cache: yes
+  when: ansible_os_family == "Debian"
 
-    - name: Ensure jq is installed (for RHEL/CentOS)
-      ansible.builtin.yum:
-        name: jq
-        state: present
-      when: ansible_os_family == "RedHat"
+- name: Install jq on CentOS/RHEL
+  yum:
+    name: jq
+    state: present
+  when: ansible_os_family == "RedHat"
