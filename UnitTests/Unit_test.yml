@@ -1,4 +1,4 @@
-- name: Verify tools on target machines as a Unit test
+- name: Verify jq installation on target machines
   hosts: all
   gather_facts: true
   become: yes
@@ -6,12 +6,12 @@
     ansible_python_interpreter: /usr/bin/python3
 
   tasks:
-    - name: Check curl installation and version
-      command: curl --version
-      register: curl_check
+    - name: Check jq installation and version
+      command: jq --version
+      register: jq_check
       changed_when: false
       ignore_errors: yes
 
-    - name: Print curl version or missing message
+    - name: Print jq version or missing message
       debug:
-        msg: "{{ 'curl is installed: ' ~ curl_check.stdout.split('\n')[0] if curl_check.rc == 0 else 'curl is NOT installed' }}"
+        msg: "{{ 'jq is installed: ' ~ jq_check.stdout if jq_check.rc == 0 else 'jq is NOT installed' }}"
