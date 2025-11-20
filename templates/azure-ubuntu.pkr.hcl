@@ -85,7 +85,7 @@ build {
   ]
 
   provisioner "ansible" {
-    playbook_file = "provisioner/tools.yml"
+    playbook_file = "provisioner/provisioner.yml"
     user          = "azureuser"
   }
 }
