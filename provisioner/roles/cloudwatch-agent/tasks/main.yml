@@ -28,7 +28,8 @@
 
 - name: Enable and start CloudWatch Agent (Azure)
   command: "/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
-            -a start \
+            -a fetch-config \
             -m onPrem \
-            -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json"
+            -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json \
+            -s"
 
