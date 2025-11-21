@@ -20,7 +20,7 @@ data "azurerm_subnet" "subnet" {
 
 
 data "azurerm_shared_image_version" "custom_image" {
-  name                = "1.1.18"
+  name                = "latest"
   image_name          = var.image_name
   gallery_name        = "UbuntuVMI"
   resource_group_name = data.azurerm_resource_group.resource_group.name
