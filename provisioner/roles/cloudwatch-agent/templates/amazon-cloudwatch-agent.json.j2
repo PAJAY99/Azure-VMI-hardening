@@ -1,0 +1,24 @@
+{
+  "agent": {
+    "metrics_collection_interval": {{ metrics_interval | default(60) }},
+    "run_as_user": "root"
+  },
+  "metrics": {
+    "namespace": "{{ namespace | default('MyCustomNamespace') }}",
+    "metrics_collected": {
+      "cpu": {
+        "measurement": ["cpu_usage_idle", "cpu_usage_user", "cpu_usage_system"],
+        "metrics_collection_interval": {{ metrics_interval | default(60) }}
+      },
+      "disk": {
+        "measurement": ["used_percent"],
+        "metrics_collection_interval": {{ metrics_interval | default(60) }},
+        "resources": ["*"]
+      },
+      "mem": {
+        "measurement": ["mem_used_percent"],
+        "metrics_collection_interval": {{ metrics_interval | default(60) }}
+      }
+    }
+  }
+}

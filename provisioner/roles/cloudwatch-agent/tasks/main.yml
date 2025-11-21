@@ -1,0 +1,32 @@
+---
+- name: Download CloudWatch Agent package
+  get_url:
+    url: "https://s3.amazonaws.com/amazoncloudwatch-agent/linux/amd64/latest/AmazonCloudWatchAgent.zip"
+    dest: "/tmp/AmazonCloudWatchAgent.zip"
+
+- name: Install unzip if not present
+  package:
+    name: unzip
+    state: present
+
+- name: Unzip CloudWatch Agent package
+  unarchive:
+    src: "/tmp/AmazonCloudWatchAgent.zip"
+    dest: "/tmp/"
+    remote_src: yes
+
+- name: Install CloudWatch Agent
+  command: "/tmp/install.sh"
+  args:
+    chdir: "/tmp"
+
+- name: Upload CloudWatch Agent configuration file
+  template:
+    src: "amazon-cloudwatch-agent.json.j2"
+    dest: "/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json"
+
+- name: Enable and start CloudWatch Agent
+  command: "/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+            -a start \
+            -m ec2 \
+            -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json"

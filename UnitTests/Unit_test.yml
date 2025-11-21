@@ -15,3 +15,14 @@
     - name: Print jq version or missing message
       debug:
         msg: "{{ 'jq is installed: ' ~ jq_check.stdout if jq_check.rc == 0 else 'jq is NOT installed' }}"
+
+
+    - name: Check CloudWatch Agent version
+      command: /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a status
+      register: cw_status
+      changed_when: false
+      ignore_errors: yes
+
+    - name: Print CloudWatch Agent status
+      debug:
+        msg: "{{ 'CloudWatch Agent is running' if cw_status.rc == 0 else 'CloudWatch Agent is NOT installed or not running' }}"

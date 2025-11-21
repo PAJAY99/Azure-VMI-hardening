@@ -1,0 +1,2 @@
+metrics_interval: 60
+namespace: "MyCustomNamespace"
