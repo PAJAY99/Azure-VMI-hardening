@@ -1,0 +1,42 @@
+---
+- name: Install prerequisites
+  apt:
+    name:
+      - openjdk-11-jdk
+      - wget
+      - unzip
+    state: present
+    update_cache: yes
+
+- name: Create Artifactory directory
+  file:
+    path: "{{ artifactory_install_dir }}"
+    state: directory
+
+- name: Download Artifactory OSS
+  get_url:
+    url: "{{ artifactory_url }}"
+    dest: "{{ artifactory_install_dir }}/artifactory.tar.gz"
+
+- name: Extract Artifactory
+  unarchive:
+    src: "{{ artifactory_install_dir }}/artifactory.tar.gz"
+    dest: "{{ artifactory_install_dir }}"
+    remote_src: yes
+
+- name: Create systemd service for Artifactory
+  copy:
+    dest: /etc/systemd/system/artifactory.service
+    content: |
+      [Unit]
+      Description=JFrog Artifactory
+      After=network.target
+
+      [Service]
+      Type=simple
+      ExecStart={{ artifactory_install_dir }}/artifactory/app/bin/artifactory.sh
+      Restart=on-failure
+
+      [Install]
+      WantedBy=multi-user.target
+  notify: Restart Artifactory

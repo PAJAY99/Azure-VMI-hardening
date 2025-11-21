@@ -1,0 +1,3 @@
+artifactory_version: "7.71.9"
+artifactory_url: "https://releases.jfrog.io/artifactory/artifactory-oss/org/artifactory/oss/jfrog-artifactory-oss/{{ artifactory_version }}/jfrog-artifactory-oss-{{ artifactory_version }}-linux.tar.gz"
+artifactory_install_dir: "/opt/jfrog"
