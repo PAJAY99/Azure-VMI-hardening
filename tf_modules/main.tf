@@ -18,6 +18,14 @@ data "azurerm_subnet" "subnet" {
   resource_group_name  = var.resource_group_name
 }
 
+
+data "azurerm_shared_image_version" "custom_image" {
+  name                = "1.1.18"
+  image_name          = var.image_name
+  gallery_name        = "UbuntuVMI"
+  resource_group_name = data.azurerm_resource_group.resource_group.name
+}
+
 # Network Security Group
 resource "azurerm_network_security_group" "nsg" {
   name                = "vm-nsg-${formatdate("YYYYMMDDhhmm", timestamp())}"
@@ -88,10 +96,5 @@ resource "azurerm_linux_virtual_machine" "vm" {
     storage_account_type = "Standard_LRS"
   }
 
-  source_image_reference {
-    publisher = "Canonical"
-    offer     = "0001-com-ubuntu-server-jammy"
-    sku       = "22_04-lts-gen2"
-    version   = "latest"
-  }
+  source_image_id = data.azurerm_shared_image_version.custom_image.id
 }
