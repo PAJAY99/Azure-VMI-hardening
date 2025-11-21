@@ -1,13 +1,23 @@
 ---
-- name: Install jq on Ubuntu/Debian
-  apt:
-    name: jq
-    state: present
-    update_cache: yes
-  when: ansible_os_family == "Debian"
+- name: Install and verify jq on all Linux hosts
+  hosts: all
+  gather_facts: true
+  become: yes
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
 
-- name: Install jq on CentOS/RHEL
-  yum:
-    name: jq
-    state: present
-  when: ansible_os_family == "RedHat"
+  tasks:
+    - name: Install jq using package manager
+      package:
+        name: jq
+        state: present
+
+    - name: Check jq installation and version
+      command: jq --version
+      register: jq_check
+      changed_when: false
+      ignore_errors: yes
+
+    - name: Print jq version or missing message
+      debug:
+        msg: "{{ 'jq is installed: ' ~ jq_check.stdout if jq_check.rc == 0 else 'jq is NOT installed' }}"
