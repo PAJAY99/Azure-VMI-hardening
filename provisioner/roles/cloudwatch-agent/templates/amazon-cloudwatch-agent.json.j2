@@ -1,7 +1,8 @@
 {
   "agent": {
     "metrics_collection_interval": {{ metrics_interval | default(60) }},
-    "run_as_user": "root"
+    "run_as_user": "root",
+    "region": "{{ cloudwatch_region | default('us-east-1') }}"
   },
   "metrics": {
     "namespace": "{{ namespace | default('MyCustomNamespace') }}",

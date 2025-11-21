@@ -25,8 +25,10 @@
     src: "amazon-cloudwatch-agent.json.j2"
     dest: "/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json"
 
-- name: Enable and start CloudWatch Agent
+
+- name: Enable and start CloudWatch Agent (Azure)
   command: "/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
             -a start \
-            -m ec2 \
+            -m onPrem \
             -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json"
+
