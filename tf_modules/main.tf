@@ -21,7 +21,7 @@ data "azurerm_subnet" "subnet" {
 
 data "azurerm_shared_image_version" "custom_image" {
   name                = "latest"
-  image_name          = var.image_name
+  image_name          = "GoldenVMI"
   gallery_name        = "UbuntuVMI"
   resource_group_name = data.azurerm_resource_group.resource_group.name
 }
