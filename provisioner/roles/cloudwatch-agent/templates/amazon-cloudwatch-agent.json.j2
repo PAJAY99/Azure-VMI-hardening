@@ -2,13 +2,13 @@
   "agent": {
     "metrics_collection_interval": 60,
     "run_as_user": "root",
-    "region": "us-east-1"
+    "region": "{{ lookup('env','AWS_DEFAULT_REGION') }}"
   },
   "metrics": {
     "namespace": "AzureVMMonitoring",
     "metrics_collected": {
       "cpu": {
-        "measurement": ["cpu_usage_idle", "cpu_usage_user", "cpu_usage_system"],
+        "measurement": ["cpu_usage_idle","cpu_usage_user","cpu_usage_system"],
         "metrics_collection_interval": 60
       },
       "disk": {
@@ -18,8 +18,16 @@
       },
       "mem": {
         "measurement": ["mem_used_percent"],
-        "metrics_collection_interval": 60
-      }
-    }
-  }
-}
+        Secure**
+- No hardcoded AWS credentials.
+- GitHub Actions injects `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_DEFAULT_REGION` as environment variables.
+- CloudWatch Agent automatically picks up credentials from environment variables (AWS SDK behavior).
+
+---
+
+### ✅ **How It Fits**
+- **Packer** runs this role during image build.
+- **Terraform** deploys VM using the baked image.
+- **GitHub Actions** provides secrets securely.
+
+---
