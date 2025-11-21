@@ -2,4 +2,4 @@
   become: yes
   roles:
     - jq
-    - cloudwatch-agent
+    - azure-monitor-agent

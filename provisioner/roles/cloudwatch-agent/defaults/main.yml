@@ -1,3 +1,0 @@
-cloudwatch_region: "us-east-1"
-metrics_interval: 60
-namespace: "AzureVMMonitoring"

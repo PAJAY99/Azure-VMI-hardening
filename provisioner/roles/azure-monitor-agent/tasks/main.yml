@@ -1,0 +1,14 @@
+- name: Download Azure Monitor Agent installer
+  get_url:
+    url: "https://aka.ms/InstallAzureMonitorLinuxAgent"
+    dest: "/tmp/InstallAzureMonitorLinuxAgent.sh"
+    mode: '0755'
+
+- name: Install Azure Monitor Agent
+  command: "/tmp/InstallAzureMonitorLinuxAgent.sh"
+
+- name: Configure Azure Monitor Agent with Log Analytics Workspace
+  command: >
+    /opt/microsoft/azuremonitoragent/bin/azuremonitoragent --configure
+    --workspace-id {{ lookup('env', 'WORKSPACE_ID') }}
+    --workspace-key {{ lookup('env', 'WORKSPACE_KEY') }}
