@@ -21,6 +21,16 @@
       register: artifactory_service
       ignore_errors: true
 
-    - name: Print jq version or missing message
+    - name: Fail if Artifactory service is not running
+      fail:
+        msg: "JFrog Artifactory service is not active!"
+      when: artifactory_service.stdout != "active"
+
+    - name: Get Artifactory version
+      command: /opt/jfrog/artifactory/app/bin/artifactoryManage.sh --version
+      register: artifactory_version
+      changed_when: false
+
+    - name: Show Artifactory version
       debug:
-        msg: "{{ 'artifactoryservice is installed: ' ~ art_check.stdout if art_check.rc == 0 else 'artifactory is NOT installed' }}"
+        msg: "JFrog Artifactory version: {{ artifactory_version.stdout }}"
