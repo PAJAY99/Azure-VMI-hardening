@@ -1,42 +1,60 @@
 ---
-- name: Install prerequisites
+- name: Ensure apt transport and dependencies
   apt:
     name:
-      - openjdk-11-jdk
-      - wget
-      - unzip
+      - apt-transport-https
+      - ca-certificates
+      - gnupg
     state: present
     update_cache: yes
 
-- name: Create Artifactory directory
-  file:
-    path: "{{ artifactory_install_dir }}"
-    state: directory
+- name: Add JFrog Artifactory GPG key
+  apt_key:
+    url: "{{ artifactory_gpg_key }}"
+    state: present
 
-- name: Download Artifactory OSS
-  get_url:
-    url: "{{ artifactory_url }}"
-    dest: "{{ artifactory_install_dir }}/artifactory.tar.gz"
+- name: Determine distribution codename
+  command: lsb_release -c
+  register: distro_codename
+  changed_when: false
 
-- name: Extract Artifactory
-  unarchive:
-    src: "{{ artifactory_install_dir }}/artifactory.tar.gz"
-    dest: "{{ artifactory_install_dir }}"
-    remote_src: yes
+- name: Add JFrog Artifactory repository
+  apt_repository:
+    repo: "deb {{ artifactory_repo_url }} {{ distro_codename.stdout.split()[1] }} main"
+    state: present
 
-- name: Create systemd service for Artifactory
-  copy:
-    dest: /etc/systemd/system/artifactory.service
-    content: |
-      [Unit]
-      Description=JFrog Artifactory
-      After=network.target
+- name: Update apt cache
+  apt:
+    update_cache: yes
 
-      [Service]
-      Type=simple
-      ExecStart={{ artifactory_install_dir }}/artifactory/app/bin/artifactory.sh
-      Restart=on-failure
+- name: Install JFrog Artifactory Pro
+  apt:
+    name: "jfrog-artifactory-pro={{ artifactory_version }}"
+    state: present
 
-      [Install]
-      WantedBy=multi-user.target
-  notify: Restart Artifactory
+- name: Enable and start Artifactory service
+  systemd:
+    name: artifactory
+    state: started
+    enabled: yes
+
+# ✅ Verification steps
+- name: Check if Artifactory binary exists
+  stat:
+    path: "/opt/jfrog/artifactory/app/bin/artifactory.sh"
+  register: artifactory_binary
+
+- name: Fail if Artifactory is not installed
+  fail:
+    msg: "JFrog Artifactory is not installed!"
+  when: not artifactory_binary.stat.exists
+
+- name: Check Artifactory service status
+  command: systemctl is-active artifactory
+  register: artifactory_service
+  ignore_errors: true
+
+- name: Fail if Artifactory service is not running
+  fail:
+    msg: "JFrog Artifactory service is not active!"
+  when: artifactory_service.stdout != "active"
