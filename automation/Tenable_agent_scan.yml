@@ -1,0 +1,246 @@
+name: Golden AMI - Tenable Agent Based Scan
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+  S3_BUCKET: your-tenable-reports-bucket
+  SCAN_NAME: "CI Golden AMI Agent Scan"
+  VULN_FAIL_THRESHOLD_HIGH: "5"
+
+jobs:
+  golden-ami:
+    runs-on: ubuntu-latest
+
+    steps:
+    # ------------------------------
+    # CHECKOUT REPOSITORY
+    # ------------------------------
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    # ------------------------------
+    # CONFIGURE AWS (OIDC AUTH)
+    # ------------------------------
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        role-to-assume: arn:aws:iam::123456789012:role/GitHubActionsOIDCRole
+        aws-region: ${{ env.AWS_REGION }}
+
+    # ------------------------------
+    # INSTALL PACKER
+    # ------------------------------
+    - name: Install Packer
+      uses: hashicorp/setup-packer@v1
+
+    # ------------------------------
+    # BUILD AMI WITH PACKER (Inline Scripts)
+    # ------------------------------
+    - name: Build AMI with Hardening + Tenable Agent
+      id: buildAMI
+      run: |
+        # ---------------------------------------
+        # Create temporary Packer file on the fly
+        # ---------------------------------------
+        cat << 'EOF' > ami.pkr.hcl
+        variable "aws_region" { default = "us-east-1" }
+
+        source "amazon-ebs" "ubuntu" {
+          region        = var.aws_region
+          instance_type = "t3.micro"
+          ssh_username  = "ubuntu"
+          ami_name      = "mini-ami-{{timestamp}}"
+
+          source_ami_filter {
+            filters = {
+              name = "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"
+            }
+            owners = ["099720109477"]
+            most_recent = true
+          }
+        }
+
+        build {
+          sources = ["source.amazon-ebs.ubuntu"]
+
+          # HARDENING SCRIPT
+          provisioner "shell" {
+            inline = [
+              "echo '[hardening] Updating system packages...'",
+              "sudo apt-get update -y",
+              "sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y",
+
+              "echo '[hardening] Removing unused packages...'",
+              "sudo apt-get autoremove -y",
+
+              "echo '[hardening] Setting up UFW firewall...'",
+              "sudo apt-get install -y ufw",
+              "sudo ufw default deny incoming",
+              "sudo ufw default allow outgoing",
+              "sudo ufw --force enable",
+
+              "echo '[hardening] Disabling root SSH login...'",
+              "sudo sed -i 's/^PermitRootLogin .*/PermitRootLogin no/' /etc/ssh/sshd_config || true",
+              "sudo sed -i 's/^#PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config || true",
+              "sudo systemctl restart sshd || true"
+            ]
+          }
+
+          # INSTALL TENABLE AGENT
+          provisioner "shell" {
+            inline = [
+              "echo '[tenable] Installing Tenable Agent...'",
+              "sudo apt-get install -y wget",
+              "wget -q -O /tmp/agent.deb https://downloads.tenable.com/tenable-agent/tenable-agent-linux-x64.deb || true",
+              "sudo dpkg -i /tmp/agent.deb || sudo apt-get -f install -y",
+
+              "echo '[tenable] Linking agent...'",
+              "sudo /opt/tenable/tenable-agent/agentcli link --key ${TENABLE_ACTIVATION_KEY} --name 'ci-ami-agent' || true",
+              "sudo systemctl enable --now tenable-agent || true"
+            ]
+          }
+
+          post-processor "shell-local" {
+            inline = [
+              "echo AMI_ID={{ .ArtifactId }} > ami.txt"
+            ]
+          }
+        }
+        EOF
+
+        # Run packer build
+        export TENABLE_ACTIVATION_KEY="${{ secrets.TENABLE_ACTIVATION_KEY }}"
+        packer build ami.pkr.hcl
+
+        # Read generated AMI id
+        AMI_ID=$(cat ami.txt | cut -d'=' -f2)
+        echo "AMI_ID=$AMI_ID"
+        echo "AMI_ID=$AMI_ID" >> $GITHUB_OUTPUT
+
+    # ------------------------------
+    # LAUNCH TEST EC2 INSTANCE
+    # ------------------------------
+    - name: Launch Test EC2
+      id: launchEC2
+      run: |
+        INSTANCE_ID=$(aws ec2 run-instances \
+          --image-id ${{ steps.buildAMI.outputs.AMI_ID }} \
+          --instance-type t3.micro \
+          --query 'Instances[0].InstanceId' \
+          --output text)
+
+        aws ec2 wait instance-status-ok --instance-ids $INSTANCE_ID
+
+        PUBLIC_IP=$(aws ec2 describe-instances \
+          --instance-ids $INSTANCE_ID \
+          --query 'Reservations[0].Instances[0].PublicIpAddress' \
+          --output text)
+
+        echo "INSTANCE_ID=$INSTANCE_ID" >> $GITHUB_OUTPUT
+        echo "PUBLIC_IP=$PUBLIC_IP" >> $GITHUB_OUTPUT
+
+    # ------------------------------
+    # WAIT FOR TENABLE AGENT TO REPORT
+    # ------------------------------
+    - name: Wait for Tenable Agent to register
+      run: |
+        echo "Waiting 45 seconds for Tenable agent to link..."
+        sleep 45
+
+    # ------------------------------
+    # RUN TENABLE AGENT SCAN (Python embedded in YAML)
+    # ------------------------------
+    - name: Run Tenable Agent Scan
+      run: |
+        # Create inline Python script
+        cat << 'EOF' > tenable_scan.py
+        import os, sys, time, requests, boto3
+
+        API_BASE = "https://cloud.tenable.com"
+        ACCESS_KEY = os.getenv("TENABLE_ACCESS_KEY")
+        SECRET_KEY = os.getenv("TENABLE_SECRET_KEY")
+        S3_BUCKET = os.getenv("S3_BUCKET")
+        AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
+        TARGET_AGENT_NAME = "ci-ami-agent"
+        SCAN_NAME = os.getenv("SCAN_NAME", "AMI-Agent-Scan")
+        VULN_FAIL_THRESHOLD_HIGH = int(os.getenv("VULN_FAIL_THRESHOLD_HIGH", "5"))
+        HEADERS = {"X-ApiKeys": f"accessKey={ACCESS_KEY}; secretKey={SECRET_KEY}", "Content-Type": "application/json"}
+
+        def create_scan():
+            body={"settings":{"name":SCAN_NAME,"text_targets":TARGET_AGENT_NAME}}
+            r=requests.post(API_BASE+"/scans",headers=HEADERS,json=body); r.raise_for_status()
+            return r.json()["id"]
+
+        def launch(scan_id):
+            r=requests.post(f"{API_BASE}/scans/{scan_id}/launch",headers=HEADERS); r.raise_for_status()
+
+        def wait(scan_id):
+            while True:
+                r=requests.get(f"{API_BASE}/scans/{scan_id}",headers=HEADERS); r.raise_for_status()
+                status=r.json().get("info",{}).get("status","")
+                print("Scan status:",status)
+                if status=="completed": return
+                time.sleep(10)
+
+        def export_csv(scan_id):
+            r=requests.post(f"{API_BASE}/scans/{scan_id}/export",headers=HEADERS,json={"format":"csv"})
+            file_id=r.json()["file"]
+            while True:
+                rs=requests.get(f"{API_BASE}/scans/{scan_id}/export/{file_id}",headers=HEADERS)
+                if rs.json().get("status")=="ready": break
+                time.sleep(3)
+            return requests.get(f"{API_BASE}/scans/{scan_id}/export/{file_id}/download",headers=HEADERS).content
+
+        def upload(content,key):
+            s3=boto3.client("s3",region_name=AWS_REGION)
+            s3.put_object(Bucket=S3_BUCKET,Key=key,Body=content)
+
+        def main():
+            scan_id=create_scan()
+            print("Created scan:",scan_id)
+            launch(scan_id)
+            wait(scan_id)
+            content=export_csv(scan_id)
+            key=f"reports/{int(time.time())}_{scan_id}.csv"
+            upload(content,key)
+            print("Uploaded report to S3:",key)
+
+        if _name_ == "_main_":
+            main()
+        EOF
+
+        pip install boto3 requests
+        python3 tenable_scan.py
+
+    # ------------------------------
+    # TERMINATE TEST INSTANCE
+    # ------------------------------
+    - name: Terminate EC2 Instance
+      if: always()
+      run: |
+        aws ec2 terminate-instances --instance-ids ${{ steps.launchEC2.outputs.INSTANCE_ID }}
+
+    # ------------------------------
+    # TAG THE AMI AS APPROVED
+    # ------------------------------
+    - name: Tag AMI Approved
+      if: success()
+      run: |
+        aws ec2 create-tags \
+          --resources ${{ steps.buildAMI.outputs.AMI_ID }} \
+          --tags Key=AMI_STATUS,Value=APPROVED
+
+    - name: Tag AMI Rejected
+      if: failure()
+      run: |
+        aws ec2 create-tags \
+          --resources ${{ steps.buildAMI.outputs.AMI_ID }} \
+          --tags Key=AMI_STATUS,Value=REJECTED
